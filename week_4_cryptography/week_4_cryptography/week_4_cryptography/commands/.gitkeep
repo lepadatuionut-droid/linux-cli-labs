@@ -1,0 +1,29 @@
+gpg --version
+touch encrypt.txt
+echo "I need to be encrypted" > encrypt.txt
+cat encrypt.txt
+
+gpg --symmetric --cipher-algo AES256 encrypt.txt
+
+cat encrypt.txt.gpg
+
+mkdir Encrypt_Directory
+mv encrypt.txt.gpg Encrypt_Directory
+cd Encrypt_Directory
+
+gpg -o decrypt.txt -d encrypt.txt.gpg
+
+cat decrypt.txt
+
+gpg --full-generate-key
+
+gpg --list-keys
+gpg --list-secret-keys
+
+touch asym_file.txt
+echo "This file needs to be encrypted using asymmetric cryptography." > asym_file.txt
+
+gpg -r user@email -e asym_file.txt
+gpg -d asym_file.txt.gpg
+
+echo "Hello" | sha256sum
