@@ -1,0 +1,452 @@
+
+# Week 4 – Cryptography (Kali / Apporto)
+
+This lab focused on **cryptography fundamentals using GNU Privacy Guard (GPG)** in Kali Linux — a critical component of cybersecurity used to protect sensitive information.
+
+Tasks included:
+
+* verifying encryption tools
+* creating plaintext files
+* encrypting files using **AES-256 symmetric encryption**
+* decrypting encrypted files
+* generating **RSA asymmetric key pairs**
+* locating cryptographic keys in Linux
+* listing public and private keys
+* demonstrating hashing
+* completing a practical encryption exercise
+
+Cryptography provides several security properties including **confidentiality, integrity, authentication, and non-repudiation**.
+
+*(Reference: CyberSec Tutorial Week 4 document)* 
+
+---
+
+# 1. Checking Encryption Tools (GPG)
+
+Using:
+
+```bash
+gpg --version
+```
+
+This command verifies that **GNU Privacy Guard (GPG)** is installed and available in the Kali Linux environment.
+
+The output displays:
+
+* installed GPG version
+* supported encryption algorithms (AES, RSA)
+* supported hash algorithms (SHA)
+* supported compression methods
+
+GPG is an open-source encryption tool used for **secure communication and digital signatures**.
+
+### Evidence
+
+**Figure 1 – Check encryption tools installed & version**
+
+---
+
+# 2. Creating a Plaintext File
+
+Create a file that will be used as input for encryption.
+
+```bash
+touch encrypt.txt
+echo "I need to be encrypted" > encrypt.txt
+cat encrypt.txt
+```
+
+Explanation:
+
+* `touch encrypt.txt` → creates an empty file
+* `echo` → inserts text into the file
+* `cat` → displays file contents
+
+The file now contains readable **plaintext data**.
+
+Plaintext represents data before encryption is applied.
+
+### Evidence
+
+**Figure 2 – Created plaintext file before encryption**
+
+---
+
+# 3. Symmetric Encryption (AES-256)
+
+Encrypt the plaintext file using **AES-256 symmetric encryption**.
+
+```bash
+gpg --symmetric --cipher-algo AES256 encrypt.txt
+```
+
+Passphrase used:
+
+```
+Kali123@
+```
+
+The command generates a new encrypted file:
+
+```
+encrypt.txt.gpg
+```
+
+The original plaintext file remains unchanged.
+
+Explanation:
+
+* `--symmetric` → enables symmetric encryption
+* `--cipher-algo AES256` → specifies the AES-256 encryption algorithm
+
+AES-256 is considered highly secure because it has **2²⁵⁶ possible keys**, making brute-force attacks computationally impractical.
+
+### Evidence
+
+**Figure 3 – Encrypting file using AES256 symmetric encryption**
+
+---
+
+# 4. Viewing Ciphertext
+
+Display the encrypted file contents:
+
+```bash
+cat encrypt.txt.gpg
+```
+
+The output appears as **random unreadable characters**.
+
+This encrypted data is known as **ciphertext**.
+
+Ciphertext cannot be understood without the correct **decryption key or passphrase**.
+
+### Evidence
+
+**Figure 4 – Encrypted file showing ciphertext**
+
+---
+
+# 5. Organising Encrypted Files
+
+Create a directory to store encrypted files.
+
+```bash
+mkdir Encrypt_Directory
+mv encrypt.txt.gpg Encrypt_Directory
+cd Encrypt_Directory
+ls
+```
+
+Explanation:
+
+* `mkdir` → creates a directory
+* `mv` → moves encrypted file
+* `cd` → navigates to directory
+* `ls` → verifies file location
+
+This demonstrates **secure organisation and handling of encrypted files**.
+
+### Evidence
+
+**Figure 5 – Moving encrypted file into secure directory**
+
+---
+
+# 6. Decrypting the File
+
+Decrypt the encrypted file using the original passphrase.
+
+```bash
+gpg -o decrypt.txt -d encrypt.txt.gpg
+```
+
+Explanation:
+
+* `-d` → decrypt file
+* `-o decrypt.txt` → specify output filename
+
+Verify the decrypted file:
+
+```bash
+cat decrypt.txt
+```
+
+Expected output:
+
+```
+I need to be encrypted
+```
+
+This confirms the **successful encryption and decryption process**.
+
+### Evidence
+
+**Figure 6 – Decrypting encrypted file**
+
+---
+
+# 7. Verifying Decrypted Content
+
+Confirm that the decrypted file contains the original plaintext.
+
+```bash
+cat decrypt.txt
+```
+
+Expected result:
+
+```
+I need to be encrypted
+```
+
+This verifies that the **original plaintext data has been successfully restored**.
+
+### Evidence
+
+**Figure 7 – Successful decryption of file**
+
+---
+
+# 8. Generating Asymmetric Key Pairs
+
+Generate an **RSA cryptographic key pair**.
+
+```bash
+gpg --full-generate-key
+```
+
+Configuration used:
+
+| Parameter  | Value         |
+| ---------- | ------------- |
+| Algorithm  | RSA           |
+| Key Size   | 3072 bits     |
+| Expiry     | No expiration |
+| Passphrase | Kali123@      |
+
+The process generates two keys:
+
+| Key Type    | Purpose              |
+| ----------- | -------------------- |
+| Public Key  | Used to encrypt data |
+| Private Key | Used to decrypt data |
+
+Asymmetric encryption allows secure communication **without sharing the private key**.
+
+### Evidence
+
+**Figure 8 – Generating asymmetric cryptographic key pair**
+
+---
+
+# 9. Locating Cryptographic Key Storage
+
+GPG stores keys inside the user's home directory.
+
+```bash
+ls -a $HOME
+```
+
+Hidden directory:
+
+```
+.gnupg
+```
+
+Inside `.gnupg`:
+
+| File / Directory  | Purpose                        |
+| ----------------- | ------------------------------ |
+| private-keys-v1.d | stores private keys            |
+| pubring.kbx       | stores public keys             |
+| trustdb.gpg       | stores key trust relationships |
+
+### Evidence
+
+**Figure 9 – Location of generated cryptographic keys**
+
+---
+
+# 10. Viewing Asymmetric Keys
+
+Public keys:
+
+```bash
+gpg --list-keys
+```
+
+Private keys:
+
+```bash
+gpg --list-secret-keys
+```
+
+These commands display:
+
+* key ID
+* algorithm type
+* user identity
+* creation date
+* encryption subkeys
+
+### Evidence
+
+**Figure 10 – Listing generated public cryptographic keys**
+
+**Figure 11 – Listing generated private cryptographic keys**
+
+---
+
+# 11. Asymmetric Encryption Demonstration
+
+Create a file to encrypt using the generated public key.
+
+```bash
+touch asym_file.txt
+echo "This file needs to be encrypted using asymmetric cryptography." > asym_file.txt
+cat asym_file.txt
+```
+
+Encrypt using the recipient's public key:
+
+```bash
+gpg -r your_email@example.com -e asym_file.txt
+```
+
+Explanation:
+
+* `-r` → specifies recipient public key
+* `-e` → encrypt file
+
+Generated file:
+
+```
+asym_file.txt.gpg
+```
+
+Decrypt using the private key:
+
+```bash
+gpg -d asym_file.txt.gpg
+```
+
+This demonstrates how **public key encryption enables secure communication**.
+
+---
+
+# 12. Hashing (Integrity Verification)
+
+Hash functions provide **data integrity**.
+
+Characteristics of hashing:
+
+* one-way function
+* fixed-length output
+* small input changes produce completely different hashes
+
+Example:
+
+```bash
+echo "Hello" | sha256sum
+```
+
+Hashing is widely used for:
+
+* password storage
+* file integrity verification
+* digital signatures
+
+---
+
+# 13. Lab Exercise – Encryption Task
+
+Task objectives:
+
+1. Create a file `confidential.txt`
+2. Store it inside a directory called `Private`
+3. Encrypt the file
+4. Decrypt the file as `open_info.txt`
+
+Commands used:
+
+```bash
+mkdir Private
+touch confidential.txt
+echo "Sensitive Information" > confidential.txt
+mv confidential.txt Private
+cd Private
+
+gpg --symmetric --cipher-algo AES256 confidential.txt
+
+gpg -o open_info.txt -d confidential.txt.gpg
+```
+
+### Justification for Algorithm
+
+AES-256 symmetric encryption was chosen because:
+
+* the same user performs encryption and decryption
+* symmetric encryption is faster than asymmetric encryption
+* AES-256 provides extremely strong security
+
+---
+
+# 14. Security Relevance in Cybersecurity
+
+Cryptography is fundamental to modern cybersecurity.
+
+Key applications include:
+
+* secure communications
+* encrypted storage
+* digital signatures
+* secure email systems
+* authentication systems
+
+Encryption ensures **confidentiality**, while hashing ensures **integrity**.
+
+Incorrect key management can expose sensitive information, making cryptography an essential skill for cybersecurity professionals.
+
+---
+
+# 15. Evidence
+
+Full lab documentation:
+
+```
+docs/Tutorial Week 4 screenshots.docx
+```
+
+Screenshots used in this lab include:
+
+| Figure    | Description                 |
+| --------- | --------------------------- |
+| Figure 1  | GPG version verification    |
+| Figure 2  | Plaintext file creation     |
+| Figure 3  | AES-256 encryption          |
+| Figure 4  | Ciphertext output           |
+| Figure 5  | Encrypted file organisation |
+| Figure 6  | Decryption command          |
+| Figure 7  | Decrypted file verification |
+| Figure 8  | RSA key pair generation     |
+| Figure 9  | Key storage directory       |
+| Figure 10 | Public key listing          |
+| Figure 11 | Private key listing         |
+
+---
+
+# Result of the Lab
+
+This lab successfully demonstrated:
+
+* file encryption using **AES-256 symmetric cryptography**
+* file decryption using the same passphrase
+* creation of **RSA asymmetric key pairs**
+* practical use of **GPG encryption tools**
+* demonstration of hashing and integrity verification
+
+These techniques are essential for **protecting sensitive information in cybersecurity systems**.
+
+---
+
