@@ -1,0 +1,14 @@
+# Screenshot Evidence
+
+Below are selected screenshots demonstrating the cryptographic operations performed during the lab.
+
+| Step | Screenshot |
+|-----|------------|
+| Verify GPG installation | ![GPG Version](screenshots/gpg_version.png) |
+| Create plaintext file | ![Plaintext File](screenshots/plaintext_file.png) |
+| AES-256 Encryption | ![Encryption](screenshots/encryption.png) |
+| Ciphertext Output | ![Ciphertext](screenshots/ciphertext.png) |
+| Decryption | ![Decryption](screenshots/decryption.png) |
+| RSA Key Generation | ![Key Generation](screenshots/key_generation.png) |
+| Public Key Listing | ![Public Keys](screenshots/public_keys.png) |
+| Private Key Listing | ![Private Keys](screenshots/private_keys.png) |
